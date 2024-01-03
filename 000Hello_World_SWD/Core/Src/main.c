@@ -98,9 +98,6 @@ int main(void)
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
 
-  // enable the CYCCNT counter
-  //*DWT_CTRL |= (1 << 0);
-
   xReturned = xTaskCreate(Task1_Handler, "Task-1", 200, "Hello world from Task-1", 2, &xTask1Handle);
   configASSERT(pdPASS == xReturned);
 
