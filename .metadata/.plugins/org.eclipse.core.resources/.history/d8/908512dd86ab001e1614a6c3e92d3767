@@ -460,7 +460,7 @@ static void led_green_handler(void *pvParam)
 		SEGGER_SYSVIEW_PrintfTarget("green");
 		//HAL_Delay(1000);
 		//vTaskDelay(pdMS_TO_TICKS(1000));
-		xWasDelayed = xTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(1000));
+		xWasDelayed = vTaskDelayUntil(xLastWakeTime,pdMS_TO_TICKS(1000));
 	}
 
 	vTaskDelete(NULL);
@@ -479,7 +479,7 @@ static void led_red_handler(void *pvParam)
 		SEGGER_SYSVIEW_PrintfTarget("red");
 		//HAL_Delay(250);
 		//vTaskDelay(pdMS_TO_TICKS(250));
-		xWasDelayed = xTaskDelayUntil(&xLastWakeTime,pdMS_TO_TICKS(250));
+		xWasDelayed = vTaskDelayUntil(xLastWakeTime,pdMS_TO_TICKS(250));
 	}
 
 	vTaskDelete(NULL);
@@ -496,8 +496,7 @@ static void dummy_handler(void *pvParam)
 
 		SEGGER_SYSVIEW_PrintfTarget("dummy");
 		//HAL_Delay(400);
-		//vTaskDelay(pdMS_TO_TICKS(400));
-		xWasDelayed = xTaskDelayUntil(&xLastWakeTime,pdMS_TO_TICKS(400));
+		vTaskDelay(pdMS_TO_TICKS(400));
 	}
 
 	vTaskDelete(NULL);

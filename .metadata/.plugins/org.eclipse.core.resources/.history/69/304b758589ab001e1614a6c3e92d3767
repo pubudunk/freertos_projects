@@ -496,7 +496,7 @@ static void dummy_handler(void *pvParam)
 
 		SEGGER_SYSVIEW_PrintfTarget("dummy");
 		//HAL_Delay(400);
-		//vTaskDelay(pdMS_TO_TICKS(400));
+		//vTaskDelay(pdMS_TO_TICKS(40));
 		xWasDelayed = xTaskDelayUntil(&xLastWakeTime,pdMS_TO_TICKS(400));
 	}
 
