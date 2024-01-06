@@ -461,6 +461,7 @@ static void led_green_handler(void *pvParam)
 		//HAL_Delay(1000);
 		//vTaskDelay(pdMS_TO_TICKS(1000));
 		xWasDelayed = xTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(1000));
+		configASSERT(pdPASS == xWasDelayed);
 	}
 
 	vTaskDelete(NULL);
@@ -480,6 +481,7 @@ static void led_red_handler(void *pvParam)
 		//HAL_Delay(250);
 		//vTaskDelay(pdMS_TO_TICKS(250));
 		xWasDelayed = xTaskDelayUntil(&xLastWakeTime,pdMS_TO_TICKS(250));
+		configASSERT(pdPASS == xWasDelayed);
 	}
 
 	vTaskDelete(NULL);
@@ -498,6 +500,7 @@ static void dummy_handler(void *pvParam)
 		//HAL_Delay(400);
 		//vTaskDelay(pdMS_TO_TICKS(400));
 		xWasDelayed = xTaskDelayUntil(&xLastWakeTime,pdMS_TO_TICKS(400));
+		configASSERT(pdPASS == xWasDelayed);
 	}
 
 	vTaskDelete(NULL);
