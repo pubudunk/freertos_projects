@@ -121,10 +121,10 @@ int main(void)
   configASSERT(pdPASS == xReturned);
   xNextTaskHandle = xRedLedTaskHandle;
 
-  xReturned = xTaskCreate(green_led_handler, "green_led_handler", 200, NULL, 2, &xGreenLedTaskHandle);
+  xReturned = xTaskCreate(green_led_handler, "green_led_handler", 200, NULL, 3, &xGreenLedTaskHandle);
   configASSERT(pdPASS == xReturned);
 
-  xReturned = xTaskCreate(button_handler, "button_handler", 200, NULL, 2, &xButtonTaskHandle);
+  xReturned = xTaskCreate(button_handler, "button_handler", 200, NULL, 4, &xButtonTaskHandle);
   configASSERT(pdPASS == xReturned);
 
 
