@@ -1,0 +1,10 @@
+../Drivers/CMSIS/Include/core_cm4.h:1684:22:__NVIC_EnableIRQ	2
+../Drivers/CMSIS/Include/core_cm4.h:1814:22:__NVIC_SetPriority	2
+C:/Users/pubud/OneDrive/Desktop/Learning/01 Firmware/02 Udemy - FreeRTOS/workspace/common/Thirdparty/SEGGER/Rec/segger_uart.c:107:13:_StartSysView	2
+C:/Users/pubud/OneDrive/Desktop/Learning/01 Firmware/02 Udemy - FreeRTOS/workspace/common/Thirdparty/SEGGER/Rec/segger_uart.c:116:13:_cbOnUARTRx	2
+C:/Users/pubud/OneDrive/Desktop/Learning/01 Firmware/02 Udemy - FreeRTOS/workspace/common/Thirdparty/SEGGER/Rec/segger_uart.c:127:12:_cbOnUARTTx	3
+C:/Users/pubud/OneDrive/Desktop/Learning/01 Firmware/02 Udemy - FreeRTOS/workspace/common/Thirdparty/SEGGER/Rec/segger_uart.c:144:6:SEGGER_UART_init	1
+C:/Users/pubud/OneDrive/Desktop/Learning/01 Firmware/02 Udemy - FreeRTOS/workspace/common/Thirdparty/SEGGER/Rec/segger_uart.c:154:6:HIF_UART_WaitForTxEnd	3
+C:/Users/pubud/OneDrive/Desktop/Learning/01 Firmware/02 Udemy - FreeRTOS/workspace/common/Thirdparty/SEGGER/Rec/segger_uart.c:175:6:USART1_IRQHandler	7
+C:/Users/pubud/OneDrive/Desktop/Learning/01 Firmware/02 Udemy - FreeRTOS/workspace/common/Thirdparty/SEGGER/Rec/segger_uart.c:213:6:HIF_UART_EnableTXEInterrupt	1
+C:/Users/pubud/OneDrive/Desktop/Learning/01 Firmware/02 Udemy - FreeRTOS/workspace/common/Thirdparty/SEGGER/Rec/segger_uart.c:223:6:HIF_UART_Init	3
