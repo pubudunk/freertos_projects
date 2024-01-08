@@ -1,5 +1,9 @@
 .metadata/
 
+
+#debug files
+*.cyclo
+
 # Prerequisites
 *.d
 
