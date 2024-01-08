@@ -1,7 +1,0 @@
-../Core/Src/main.c:78:5:main	3
-../Core/Src/main.c:143:6:SystemClock_Config	3
-../Core/Src/main.c:190:13:MX_GPIO_Init	1
-../Core/Src/main.c:450:13:notifywait_handler	3
-../Core/Src/main.c:489:13:notify_handler	2
-../Core/Src/main.c:520:6:HAL_TIM_PeriodElapsedCallback	2
-../Core/Src/main.c:537:6:Error_Handler	1
