@@ -544,7 +544,8 @@ void button_irq_handler()
 	/* Force a context switch if xHigherPriorityTaskWoken is now set to pdTRUE. */
 	portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
 
-	traceISR_EXIT();
+	traceISR_ENTER();	// instruct segger systemview to capture isr
+
 }
 
 /* USER CODE END 4 */
