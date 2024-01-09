@@ -42,34 +42,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := 005TaskNotify_TaskDelete
+BUILD_ARTIFACT_NAME := 004TaskNotify_TaskDelete
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-005TaskNotify_TaskDelete.elf \
+004TaskNotify_TaskDelete.elf \
 
 MAP_FILES += \
-005TaskNotify_TaskDelete.map \
+004TaskNotify_TaskDelete.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-005TaskNotify_TaskDelete.list \
+004TaskNotify_TaskDelete.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: 005TaskNotify_TaskDelete.elf secondary-outputs
+main-build: 004TaskNotify_TaskDelete.elf secondary-outputs
 
 # Tool invocations
-005TaskNotify_TaskDelete.elf 005TaskNotify_TaskDelete.map: $(OBJS) $(USER_OBJS) C:\Users\pubud\OneDrive\Desktop\Learning\01\ Firmware\02\ Udemy\ -\ FreeRTOS\workspace\005TaskNotify_TaskDelete\STM32F429ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "005TaskNotify_TaskDelete.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\pubud\OneDrive\Desktop\Learning\01 Firmware\02 Udemy - FreeRTOS\workspace\005TaskNotify_TaskDelete\STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="005TaskNotify_TaskDelete.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+004TaskNotify_TaskDelete.elf 004TaskNotify_TaskDelete.map: $(OBJS) $(USER_OBJS) C:\Users\pubud\OneDrive\Desktop\Learning\01\ Firmware\02\ Udemy\ -\ FreeRTOS\workspace\004TaskNotify_TaskDelete\STM32F429ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "004TaskNotify_TaskDelete.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\pubud\OneDrive\Desktop\Learning\01 Firmware\02 Udemy - FreeRTOS\workspace\004TaskNotify_TaskDelete\STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="004TaskNotify_TaskDelete.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -78,14 +78,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-005TaskNotify_TaskDelete.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "005TaskNotify_TaskDelete.list"
+004TaskNotify_TaskDelete.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "004TaskNotify_TaskDelete.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) 005TaskNotify_TaskDelete.elf 005TaskNotify_TaskDelete.list 005TaskNotify_TaskDelete.map default.size.stdout
+	-$(RM) 004TaskNotify_TaskDelete.elf 004TaskNotify_TaskDelete.list 004TaskNotify_TaskDelete.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
