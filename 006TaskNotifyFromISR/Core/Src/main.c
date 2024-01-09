@@ -71,7 +71,6 @@ extern void SEGGER_UART_init(U32 baud);
 /* USER CODE BEGIN 0 */
 static TaskHandle_t xRedLedTaskHandle = NULL;
 static TaskHandle_t xGreenLedTaskHandle = NULL;
-static TaskHandle_t xButtonTaskHandle = NULL;
 static volatile TaskHandle_t xNextTaskHandle = NULL;
 /* USER CODE END 0 */
 
@@ -262,8 +261,14 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : B1_Pin MEMS_INT1_Pin MEMS_INT2_Pin TP_INT1_Pin */
-  GPIO_InitStruct.Pin = B1_Pin|MEMS_INT1_Pin|MEMS_INT2_Pin|TP_INT1_Pin;
+  /*Configure GPIO pin : B1_Pin */
+  GPIO_InitStruct.Pin = B1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : MEMS_INT1_Pin MEMS_INT2_Pin TP_INT1_Pin */
+  GPIO_InitStruct.Pin = MEMS_INT1_Pin|MEMS_INT2_Pin|TP_INT1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_EVT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
@@ -443,6 +448,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Alternate = GPIO_AF12_FMC;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI0_IRQn, 6, 0);
+  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
 }
@@ -467,9 +476,9 @@ static void red_led_handler(void *pvParam)
 				// keep red led set
 				HAL_GPIO_WritePin(GPIOG, LD4_Pin, GPIO_PIN_SET);
 
-				vTaskSuspendAll();	// suspend scheduler to avoid race condition with button task
+				portENTER_CRITICAL();	// enter critical section - disable interrupts to access shared resource
 					xNextTaskHandle = xGreenLedTaskHandle;
-				xTaskResumeAll();
+				portEXIT_CRITICAL();
 				vTaskDelete(NULL);
 		} else {
 			memset(segger_buf, 0, sizeof(segger_buf));
@@ -500,10 +509,9 @@ static void green_led_handler(void *pvParam)
 				// keep green led set
 				HAL_GPIO_WritePin(GPIOG, LD3_Pin, GPIO_PIN_SET);
 
-				vTaskSuspendAll();	// suspend scheduler to avoid race condition with button task
+				portENTER_CRITICAL();	// enter critical section - disable interrupts to access shared resource
 					xNextTaskHandle = NULL;
-				xTaskResumeAll();
-				vTaskDelete(xButtonTaskHandle);
+				portEXIT_CRITICAL();
 				vTaskDelete(NULL);
 		} else {
 			memset(segger_buf, 0, sizeof(segger_buf));
@@ -519,7 +527,9 @@ static void green_led_handler(void *pvParam)
 
 void button_irq_handler()
 {
-
+	traceISR_ENTER();	// instruct segger systemview to capture isr
+	xTaskNotifyFromISR(xNextTaskHandle, 0, eNoAction, NULL);
+	traceISR_EXIT();
 }
 
 /* USER CODE END 4 */
