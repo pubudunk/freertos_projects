@@ -527,8 +527,23 @@ static void green_led_handler(void *pvParam)
 
 void button_irq_handler()
 {
+	BaseType_t xHigherPriorityTaskWoken;
+
 	traceISR_ENTER();	// instruct segger systemview to capture isr
-	xTaskNotifyFromISR(xNextTaskHandle, 0, eNoAction, NULL);
+
+	/* xHigherPriorityTaskWoken must be initialised to pdFALSE.  If calling
+	    xTaskNotifyFromISR() unblocks the handling task, and the priority of
+	    the handling task is higher than the priority of the currently running task,
+	    then xHigherPriorityTaskWoken will automatically get set to pdTRUE. */
+	xHigherPriorityTaskWoken = pdFALSE;
+
+	/* Unblock the handling task so the task can perform any processing necessitated
+	    by the interrupt */
+	xTaskNotifyFromISR(xNextTaskHandle, 0, eNoAction, &xHigherPriorityTaskWoken);
+
+	/* Force a context switch if xHigherPriorityTaskWoken is now set to pdTRUE. */
+	portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+
 	traceISR_EXIT();
 }
 
