@@ -38,6 +38,9 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
+const char *pcRedLedHandleName = "red_led_task";
+const char *pcGreenLedHandleName = "green_led_task";
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -60,7 +63,10 @@ static void MX_GPIO_Init(void);
 
 static void red_led_handler(void *pvParam);
 static void green_led_handler(void *pvParam);
+static void switch_priority(void);
+
 void button_irq_handler(void);
+
 
 extern void SEGGER_UART_init(U32 baud);
 
@@ -71,6 +77,7 @@ extern void SEGGER_UART_init(U32 baud);
 /* USER CODE BEGIN 0 */
 static TaskHandle_t xRedLedTaskHandle = NULL;
 static TaskHandle_t xGreenLedTaskHandle = NULL;
+static uint8_t button_pressed = 0;
 /* USER CODE END 0 */
 
 /**
@@ -115,10 +122,10 @@ int main(void)
   // start segger recording
   SEGGER_SYSVIEW_Conf();
 
-  xReturned = xTaskCreate(red_led_handler, "red_led_handler", 200, NULL, 2, &xRedLedTaskHandle);
+  xReturned = xTaskCreate(red_led_handler, pcRedLedHandleName, 200, NULL, 2, &xRedLedTaskHandle);
   configASSERT(pdPASS == xReturned);
 
-  xReturned = xTaskCreate(green_led_handler, "green_led_handler", 200, NULL, 3, &xGreenLedTaskHandle);
+  xReturned = xTaskCreate(green_led_handler, pcGreenLedHandleName, 200, NULL, 3, &xGreenLedTaskHandle);
   configASSERT(pdPASS == xReturned);
 
   // start the scheduler
@@ -456,12 +463,53 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
+static void switch_priority(void)
+{
+	uint8_t switch_priority = 0;
+
+	TaskHandle_t t1,t2;
+	UBaseType_t p1,p2;
+
+	portENTER_CRITICAL();
+	if(1 == button_pressed) {
+		button_pressed = 0;
+		switch_priority = 1;
+	}
+	portEXIT_CRITICAL();
+
+	if(switch_priority) {
+
+		t1 = xRedLedTaskHandle;
+		t2 = xGreenLedTaskHandle;
+
+		// get task priorities
+		p1 = uxTaskPriorityGet(t1);
+		p2 = uxTaskPriorityGet(t2);
+
+		/*  context switch will occur before the function returns
+		 *
+		 * if the priority being set is higher than the currently executing task
+		 * There for the order of changing the priority is important */
+		if(xTaskGetCurrentTaskHandle() == t1) {
+			// swap priority with task t2
+			vTaskPrioritySet(t1, p2);
+			vTaskPrioritySet(t2, p1);
+		} else {
+			vTaskPrioritySet(t1, p2);
+			vTaskPrioritySet(t2, p1);
+		}
+		switch_priority = 0;
+	}
+
+}
+
 static void red_led_handler(void *pvParam)
 {
 	while(1)
 	{
-		HAL_GPIO_WritePin(GPIOG, LD4_Pin, GPIO_PIN_SET);
-		HAL_Delay(100);
+		HAL_GPIO_TogglePin(GPIOG, LD4_Pin);
+		HAL_Delay(pdMS_TO_TICKS(100));
+		switch_priority();
 	}
 }
 
@@ -471,8 +519,9 @@ static void green_led_handler(void *pvParam)
 	{
 		while(1)
 		{
-			HAL_GPIO_WritePin(GPIOG, LD3_Pin, GPIO_PIN_SET);
-			HAL_Delay(1000);
+			HAL_GPIO_TogglePin(GPIOG, LD3_Pin);
+			HAL_Delay(pdMS_TO_TICKS(1000));
+			switch_priority();
 		}
 	}
 }
@@ -481,6 +530,8 @@ static void green_led_handler(void *pvParam)
 void button_irq_handler()
 {
 	traceISR_ENTER();	// instruct segger systemview to capture isr
+
+	button_pressed = 1;
 
 	traceISR_EXIT();
 }

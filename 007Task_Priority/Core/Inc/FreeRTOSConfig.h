@@ -68,6 +68,7 @@
 #define configGENERATE_RUN_TIME_STATS	0
 
 
+
 /* Software timer definitions. */
 #define configUSE_TIMERS				0
 #define configTIMER_TASK_PRIORITY		( 2 )
@@ -86,6 +87,9 @@ to exclude the API function. */
 
 #define INCLUDE_xTaskGetIdleTaskHandle	1
 #define	INCLUDE_pxTaskGetStackStart		1
+
+#define INCLUDE_xTaskGetCurrentTaskHandle	1
+#define	INCLUDE_xTaskGetHandle				1
 
 /* Cortex-M specific definitions. */
 #ifdef __NVIC_PRIO_BITS
