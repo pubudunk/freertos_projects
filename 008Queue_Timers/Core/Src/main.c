@@ -560,7 +560,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 
 	// check if the q_data is not full
-	if(pdFALSE == xQueueIsQueueEmptyFromISR(q_data)) {
+	if(pdFALSE == xQueueIsQueueFullFromISR(q_data)) {
 
 		//Enqueue the data
 		xQueueSendToBackFromISR(q_data, (void *)&user_data, NULL);
@@ -568,6 +568,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		if('\n' == user_data) {
 
 			/* Make sure the last byte is \n */
+			/* if the byte is not '\n' simply ignore */
 			/* Not an ideal method */
 			uint8_t temp = 0;
 			xQueueReceiveFromISR(q_data, (void *)&temp, NULL);

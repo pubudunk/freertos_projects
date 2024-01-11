@@ -48,7 +48,7 @@ static void LedEffect_2(void)
 
 void LedEffect_3(void)
 {
-	uint8_t count = 0;
+	static uint8_t count = 0;
 
 	if(0 == count) {
 		HAL_GPIO_WritePin(GPIOG, LD3_Pin, GPIO_PIN_SET);

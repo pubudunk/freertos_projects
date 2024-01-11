@@ -31,6 +31,7 @@ extern UART_HandleTypeDef huart5;
 
 void menu_task(void *pvParam)
 {
+	uint32_t ulCmdAddr = 0;
 	command_t *xpCmd = NULL;
 	const char *pcMainMenuMsg = "===============================\n"
 								"|            Menu             |\n"
@@ -45,7 +46,8 @@ void menu_task(void *pvParam)
 		xQueueSendToBack(q_print, &pcMainMenuMsg, portMAX_DELAY);
 
 		/* Wait for notification from command handler task */
-		xTaskNotifyWait(0x00, 0x00, (uint32_t *)xpCmd, portMAX_DELAY);
+		xTaskNotifyWait(0x00, 0x00, &ulCmdAddr, portMAX_DELAY);
+		xpCmd = (command_t *)ulCmdAddr;
 		if(xpCmd) {
 			if(1 == xpCmd->len) {
 				/* command received. Valid length. It should be in the first byte. */
@@ -84,7 +86,7 @@ void cmd_handler_task(void *pvParam)
 
 		// Wait until data is received
 		xTaskNotifyWait(0x00, 0x00, NULL, portMAX_DELAY);
-
+		memset(&cmd, 0, sizeof(cmd));
 		process_command(&cmd);
 	}
 }
@@ -100,6 +102,7 @@ void print_task(void *pvParam)
 
 void led_task(void *pvParam)
 {
+	uint32_t ulCmdAddr = 0;
 	command_t *xpCmd = NULL;
 	const char *pcLedMenuMsg = " ===============================\n"
 								"|         LED Effects         |\n"
@@ -119,7 +122,8 @@ void led_task(void *pvParam)
 		xQueueSendToBack(q_print, &pcLedMenuMsg, portMAX_DELAY);
 
 		/* Wait for notification from command handler task */
-		xTaskNotifyWait(0x00, 0x00, (uint32_t *)xpCmd, portMAX_DELAY);
+		xTaskNotifyWait(0x00, 0x00, &ulCmdAddr, portMAX_DELAY);
+		xpCmd = (command_t *)ulCmdAddr;
 		if(xpCmd) {
 			if(1 == xpCmd->len) {
 				/* command received. Valid length. It should be in the first byte. */
@@ -130,7 +134,7 @@ void led_task(void *pvParam)
 				case '1':
 				case '2':
 				case '3':
-					LedEffect(xpCmd->payload[0]-48);
+					LedEffect((EFFECT_1-1) + xpCmd->payload[0]-48);
 					break;
 				default:
 					xQueueSendToBack(q_print, &pcMenuInvalidEntryErrMsg, portMAX_DELAY);

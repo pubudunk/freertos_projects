@@ -69,7 +69,7 @@ static int extract_command(command_t *cmd)
 	} while(item != '\n');
 
 	// last items is always '\n'. Replace with '\0'
-	cmd->payload[i-i] = '\0';
+	cmd->payload[i-1] = '\0';
 	cmd->len = i-1;
 
 	return pdTRUE;
