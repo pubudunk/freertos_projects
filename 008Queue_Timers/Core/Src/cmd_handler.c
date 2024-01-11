@@ -9,6 +9,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
+#include "cmd_handler.h"
 
 extern TaskHandle_t xMenuTaskHandle;
 extern TaskHandle_t xCmdTaskHandle;
@@ -20,7 +21,7 @@ extern QueueHandle_t q_data;
 extern state_t eCurrState;
 
 
-int extract_command(command_t *cmd);
+static int extract_command(command_t *cmd);
 
 void process_command(command_t *cmd)
 {
@@ -49,7 +50,7 @@ void process_command(command_t *cmd)
 	}
 }
 
-int extract_command(command_t *cmd)
+static int extract_command(command_t *cmd)
 {
 	uint8_t item,i;
 	BaseType_t status = pdFALSE;

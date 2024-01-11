@@ -260,6 +260,17 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN Private defines */
 
+/* task indexes */
+#define MAIN_TASK		0
+#define CMD_TASK		1
+#define PRINT_TASK		2
+#define LED_TASK		3
+#define RTC_TASK		4
+
+/* queue indexes */
+#define DATA_QUEUE		0
+#define PRINT_QUEUE		1
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

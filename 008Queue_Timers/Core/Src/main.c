@@ -21,9 +21,13 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdio.h>
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
+#include "timers.h"
+#include "led.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,11 +52,15 @@ UART_HandleTypeDef huart5;
 
 /* USER CODE BEGIN PV */
 
+//TaskHandle_t xTaskHandles[ 5 ] = {0};
+
 TaskHandle_t xMenuTaskHandle = NULL;
 TaskHandle_t xCmdTaskHandle = NULL;
 TaskHandle_t xPrintTaskHandle = NULL;
 TaskHandle_t xLedTaskHandle = NULL;
 TaskHandle_t xRtcTaskHandle = NULL;
+
+//QueueHandle_t xQueues[ 2 ] = {0};
 
 QueueHandle_t q_data;
 QueueHandle_t q_print;
@@ -76,6 +84,10 @@ extern void cmd_handler_task(void *pvParam);
 extern void print_task(void *pvParam);
 extern void led_task(void *pvParam);
 extern void rtc_task(void *pvParam);
+
+/* LED timer software handles */
+extern TimerHandle_t xLedTimers[ 3 ];
+extern void LedEffectCallback(TimerHandle_t xTimer);
 
 /* USER CODE END PFP */
 
@@ -116,7 +128,7 @@ int main(void)
   MX_UART5_Init();
   /* USER CODE BEGIN 2 */
 
-  // create tasks
+  /* create tasks */
   xReturned = xTaskCreate(menu_task, "menu_task", 250, NULL, 2, &xMenuTaskHandle);
   configASSERT(pdPASS == xReturned);
 
@@ -132,13 +144,21 @@ int main(void)
   xReturned = xTaskCreate(rtc_task, "rtc_task", 250, NULL, 2, &xRtcTaskHandle);
   configASSERT(pdPASS == xReturned);
 
-  // create queues
+  /* create queues */
 
   q_data = xQueueCreate(10, sizeof(char));
   configASSERT(q_data != NULL);
 
-  q_print = xQueueCreate(10, sizeof(size_t));
+  q_print = xQueueCreate(10, sizeof(uint32_t));
   configASSERT(q_print != NULL);
+
+  /* Create timers */
+  for(int i = 0; i < 3; i++) {
+	  char cTimerName[15];
+	  snprintf(cTimerName, sizeof(cTimerName), "LED Timer %d", i);
+	  xLedTimers[EFFECT_1 + i] = xTimerCreate(cTimerName, pdMS_TO_TICKS(500), pdTRUE, (void*)i, LedEffectCallback);
+	  configASSERT(xLedTimers[EFFECT_1 + i] != NULL);
+  }
 
   HAL_UART_Receive_IT(&huart5, &user_data, sizeof(user_data));
 
