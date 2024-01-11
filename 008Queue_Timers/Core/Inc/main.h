@@ -47,7 +47,7 @@ typedef enum
 {
 	sMainMenu = 0,
 	sLedEffect,
-	sRtcEffect,
+	sRtcMenu,
 	sRtcTimeConfig,
 	sRtcDateConfig,
 	sRtcReport,
