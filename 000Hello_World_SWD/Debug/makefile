@@ -63,8 +63,8 @@ all: main-build
 main-build: 000Hello_World_SWD.elf secondary-outputs
 
 # Tool invocations
-000Hello_World_SWD.elf 000Hello_World_SWD.map: $(OBJS) $(USER_OBJS) C:\Users\pubud\OneDrive\Desktop\Learning\01\ Firmware\02\ Udemy\ -\ FreeRTOS\workspace\000Hello_World_SWD\STM32F429ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "000Hello_World_SWD.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\pubud\OneDrive\Desktop\Learning\01 Firmware\02 Udemy - FreeRTOS\workspace\000Hello_World_SWD\STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="000Hello_World_SWD.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+000Hello_World_SWD.elf 000Hello_World_SWD.map: $(OBJS) $(USER_OBJS) C:\Users\pubudukarunaratna\Desktop\Learning\FreeRTOS\workspace\rtos_projects\000Hello_World_SWD\STM32F429ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "000Hello_World_SWD.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\pubudukarunaratna\Desktop\Learning\FreeRTOS\workspace\rtos_projects\000Hello_World_SWD\STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="000Hello_World_SWD.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
