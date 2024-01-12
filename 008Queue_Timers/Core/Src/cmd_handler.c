@@ -11,13 +11,15 @@
 #include "queue.h"
 #include "cmd_handler.h"
 
-extern TaskHandle_t xMenuTaskHandle;
-extern TaskHandle_t xCmdTaskHandle;
-extern TaskHandle_t xPrintTaskHandle;
-extern TaskHandle_t xLedTaskHandle;
-extern TaskHandle_t xRtcTaskHandle;
+//extern TaskHandle_t xMenuTaskHandle;
+//extern TaskHandle_t xCmdTaskHandle;
+//extern TaskHandle_t xPrintTaskHandle;
+//extern TaskHandle_t xLedTaskHandle;
+//extern TaskHandle_t xRtcTaskHandle;
 
-extern QueueHandle_t q_data;
+extern TaskHandle_t xTaskHandles[ 5 ];
+extern QueueHandle_t xQueues[ 2 ];
+
 extern state_t eCurrState;
 
 
@@ -33,16 +35,15 @@ void process_command(command_t *cmd)
 		switch(eCurrState)
 		{
 		case sMainMenu:
-			xTaskNotify(xMenuTaskHandle, (uint32_t )cmd, eSetValueWithOverwrite);
+			xTaskNotify(xTaskHandles[TMAIN], (uint32_t )cmd, eSetValueWithOverwrite);
 			break;
 		case sLedEffect:
-			xTaskNotify(xLedTaskHandle, (uint32_t )cmd, eSetValueWithOverwrite);
+			xTaskNotify(xTaskHandles[TLED], (uint32_t )cmd, eSetValueWithOverwrite);
 				break;
 		case sRtcMenu:
 		case sRtcTimeConfig:
 		case sRtcDateConfig:
-		case sRtcReport:
-			xTaskNotify(xRtcTaskHandle, (uint32_t )cmd, eSetValueWithOverwrite);
+			xTaskNotify(xTaskHandles[TRTC], (uint32_t )cmd, eSetValueWithOverwrite);
 					break;
 		default:
 			break;
@@ -56,14 +57,14 @@ static int extract_command(command_t *cmd)
 	BaseType_t status = pdFALSE;
 
 	// check if data is available in the queue
-	status = uxQueueMessagesWaiting(q_data);
+	status = uxQueueMessagesWaiting(xQueues[QDATA]);
 	if(status <=0 )
 		return pdFALSE;
 
 	i = 0;
 	do {
 
-		status = xQueueReceive(q_data, &item, 0);
+		status = xQueueReceive(xQueues[QDATA], &item, 0);
 		if(pdTRUE == status)
 			cmd->payload[i++] = item;
 	} while(item != '\n');

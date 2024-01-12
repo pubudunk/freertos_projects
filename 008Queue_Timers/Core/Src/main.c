@@ -52,18 +52,15 @@ UART_HandleTypeDef huart5;
 
 /* USER CODE BEGIN PV */
 
-//TaskHandle_t xTaskHandles[ 5 ] = {0};
+TaskHandle_t xTaskHandles[ 5 ] = {0};
 
-TaskHandle_t xMenuTaskHandle = NULL;
-TaskHandle_t xCmdTaskHandle = NULL;
-TaskHandle_t xPrintTaskHandle = NULL;
-TaskHandle_t xLedTaskHandle = NULL;
-TaskHandle_t xRtcTaskHandle = NULL;
+//TaskHandle_t xMenuTaskHandle = NULL;
+//TaskHandle_t xCmdTaskHandle = NULL;
+//TaskHandle_t xPrintTaskHandle = NULL;
+//TaskHandle_t xLedTaskHandle = NULL;
+//TaskHandle_t xRtcTaskHandle = NULL;
 
-//QueueHandle_t xQueues[ 2 ] = {0};
-
-QueueHandle_t q_data;
-QueueHandle_t q_print;
+QueueHandle_t xQueues[ 2 ] = {0};
 
 UART_HandleTypeDef huart5;
 uint8_t user_data = 0;
@@ -129,28 +126,28 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   /* create tasks */
-  xReturned = xTaskCreate(menu_task, "menu_task", 250, NULL, 2, &xMenuTaskHandle);
+  xReturned = xTaskCreate(menu_task, "menu_task", 250, NULL, 2, &xTaskHandles[TMAIN]);
   configASSERT(pdPASS == xReturned);
 
-  xReturned = xTaskCreate(cmd_handler_task, "cmd_handler_task", 250, NULL, 2, &xCmdTaskHandle);
+  xReturned = xTaskCreate(cmd_handler_task, "cmd_handler_task", 250, NULL, 2, &xTaskHandles[TCMD]);
   configASSERT(pdPASS == xReturned);
 
-  xReturned = xTaskCreate(print_task, "print_task", 250, NULL, 2, &xPrintTaskHandle);
+  xReturned = xTaskCreate(print_task, "print_task", 250, NULL, 2, &xTaskHandles[TPRINT]);
   configASSERT(pdPASS == xReturned);
 
-  xReturned = xTaskCreate(led_task, "led_task", 250, NULL, 2, &xLedTaskHandle);
+  xReturned = xTaskCreate(led_task, "led_task", 250, NULL, 2, &xTaskHandles[TLED]);
   configASSERT(pdPASS == xReturned);
 
-  xReturned = xTaskCreate(rtc_task, "rtc_task", 250, NULL, 2, &xRtcTaskHandle);
+  xReturned = xTaskCreate(rtc_task, "rtc_task", 250, NULL, 2, &xTaskHandles[TRTC]);
   configASSERT(pdPASS == xReturned);
 
   /* create queues */
 
-  q_data = xQueueCreate(10, sizeof(char));
-  configASSERT(q_data != NULL);
+  xQueues[QDATA] = xQueueCreate(10, sizeof(char));
+  configASSERT(xQueues[QDATA] != NULL);
 
-  q_print = xQueueCreate(10, sizeof(uint32_t));
-  configASSERT(q_print != NULL);
+  xQueues[QPRINT] = xQueueCreate(10, sizeof(uint32_t));
+  configASSERT(xQueues[QPRINT] != NULL);
 
   /* Create timers */
   for(int i = 0; i < 3; i++) {
@@ -560,10 +557,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 
 	// check if the q_data is not full
-	if(pdFALSE == xQueueIsQueueFullFromISR(q_data)) {
+	if(pdFALSE == xQueueIsQueueFullFromISR(xQueues[QDATA])) {
 
 		//Enqueue the data
-		xQueueSendToBackFromISR(q_data, (void *)&user_data, NULL);
+		xQueueSendToBackFromISR(xQueues[QDATA], (void *)&user_data, NULL);
 	} else {
 		if('\n' == user_data) {
 
@@ -571,15 +568,15 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 			/* if the byte is not '\n' simply ignore */
 			/* Not an ideal method */
 			uint8_t temp = 0;
-			xQueueReceiveFromISR(q_data, (void *)&temp, NULL);
-			xQueueSendToBackFromISR(q_data, (void *)&user_data, NULL);
+			xQueueReceiveFromISR(xQueues[QDATA], (void *)&temp, NULL);
+			xQueueSendToBackFromISR(xQueues[QDATA], (void *)&user_data, NULL);
 		}
 	}
 
 	if('\n' == user_data) {
 
 		// Notify the command handler task
-		xTaskNotifyFromISR(xCmdTaskHandle, 0x00, eNoAction, NULL);
+		xTaskNotifyFromISR(xTaskHandles[TCMD], 0x00, eNoAction, NULL);
 	}
 
 	// Enable UART data byte reception again
