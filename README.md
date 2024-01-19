@@ -1,1 +1,1 @@
-FreeRTOS excercises with STM32F429I-Discovery
+FreeRTOS exercises with STM32F429I-Discovery
